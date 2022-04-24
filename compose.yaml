@@ -19,20 +19,20 @@ services:
     volumes:
       - $PWD/bit-database/config/config.yaml:/app/config/config.yaml
     depends_on:
-      - mysql1
+      - mysql
     networks:
       - mynetwork
 
-  mysql1:
+  mysql:
     image: mysql/mysql-server:8.0
     restart: always
     ports:
       - "3306:3306"
     volumes:
-      - $PWD/bit-database/mysql-data:/var/lib/mysql
+      - $PWD/mysql-data:/var/lib/mysql
+      - $PWD/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: bit_database
       TZ: Asia/Shanghai
       # This allows ip ranges from 182.17.0.1 to 182.17.255.255 to connect to root
       MYSQL_ROOT_HOST: "182.17.%.%"
@@ -51,24 +51,8 @@ services:
     volumes:
       - $PWD/bit-indexer/config/config.yaml:/app/config/config.yaml
     depends_on:
-      - mysql2
+      - mysql
       - redis
-    networks:
-      - mynetwork
-
-  mysql2:
-    image: mysql/mysql-server:8.0
-    restart: always
-    ports:
-      - "3307:3306"
-    volumes:
-      - $PWD/bit-indexer/mysql-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: bit_account_indexer
-      TZ: Asia/Shanghai
-      # This allows ip ranges from 182.17.0.1 to 182.17.255.255 to connect to root
-      MYSQL_ROOT_HOST: "182.17.%.%"
     networks:
       - mynetwork
 
