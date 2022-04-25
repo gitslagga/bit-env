@@ -78,3 +78,15 @@ services:
       - redis
     networks:
       - mynetwork
+
+  bit-pay:
+    image: slagga/bit-pay:latest
+    restart: always
+    working_dir: /app
+    entrypoint: [ "/app/bit-pay", "--config", "/app/config/config.yaml" ]
+    volumes:
+      - $PWD/bit-pay/config.yaml:/app/config/config.yaml
+    depends_on:
+      - bit-register
+    networks:
+      - mynetwork
