@@ -90,3 +90,34 @@ services:
       - bit-register
     networks:
       - mynetwork
+
+  mongo:
+    image: mongo:4.2
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - $PWD/mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+      - MONGO_INITDB_DATABASE=smt
+    networks:
+      - mynetwork
+
+  sub-account:
+    image: slagga/sub-account:latest
+    restart: always
+    working_dir: /app
+    entrypoint: [ "/app/sub-account", "--config", "/app/config/config.yaml" ]
+    ports:
+      - "8125:8125"
+      - "8126:8126"
+    volumes:
+      - $PWD/sub-account/config.yaml:/app/config/config.yaml
+    depends_on:
+      - bit-database
+      - mongo
+      - redis
+    networks:
+      - mynetwork
